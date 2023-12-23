@@ -1,3 +1,3 @@
 function limparFormulario() {
-    document.getElementById('clienteForm').reset();
+    document.getElementById('clienteForm produtoForm').reset();
 }

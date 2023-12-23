@@ -32,13 +32,37 @@
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="/cliente">Cliente</a></li>
                   <li><a class="dropdown-item" href="/produto">Produto</a></li>
-                  
                 </ul>
               </li>
             </ul>
-            
           </div>
         </div>
       </nav>
+      <form id="produtoForm" class="row g-3 container" action="/cadastro-produto" method="post">
+        
+        <div class="col-md-8">
+          <label for="nomeProduto" class="form-label">Nome Produto</label>
+          <input type="text" class="form-control" name="nomeProduto" id="nomeProduto" required>
+        </div>
+        <div class="col-md-4">
+          <label for="quantidade" class="form-label">Quantidade</label>
+          <input type="text" class="form-control" name="quantidade" id="quantidade" required>
+        </div>
+        <div class="col-md-4">
+          <label for="valor" class="form-label">Valor</label>
+          <input type="text" class="form-control" name="valor" id="valor" required>
+        </div>
+        <div class="col-md-4">
+          <label for="tipo" class="form-label">Tipo</label>
+          <input type="text" class="form-control" name="tipo" id="tipo" required>
+        </div>
+        <div class="col-md-4">
+          <label for="marca" class="form-label">Marca</label>
+          <input type="text" class="form-control" name="marca" id="marca" required>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      
+      </form>
 </body>
 </html>

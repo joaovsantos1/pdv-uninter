@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="../css/cliente.css">
+    <script src="../../controller/atualizaCliente.js"></script>
+    <script src="../../controller/limparForm.js"></script>
    
 </head>
 <body>
@@ -41,10 +43,9 @@
           </div>
         </div>
       </nav>
-      <form id="clienteForm" action='/cadastro-cliente' method="post">
-        <div class="content-container">
-            <div class="custom-container">
-        <form class="row g-3">
+      
+      <form id="clienteForm" >
+        <form class="row g-3 container" action='/cadastro-cliente' method="post">
             <div class="col-md-8">
               <label for="nome" class="form-label">Nome</label>
               <input type="text" class="form-control" name="nome" id="nome" required>
@@ -74,12 +75,14 @@
               <input type="text" class="form-control" name="cep" id="cep" placeholder="00000-000" required>
             </div>
             <br>
+            
             <button type="submit" class="btn btn-primary">Salvar</button>
+            <button type="button" class="btn btn-primary" onclick="atualizarCliente()">Atualizar</button>
+            <button type="button" class="btn btn-primary" onclick="limparFormulario()">Limpar</button>
           </form>
-        </div>
+          
+        
       </form>
-      <form>
-        <button type="submit" class="btn btn-primary" onclick="limparFormulario()">Limpar</button>
-      </form>
+    
 </body>
 </html>

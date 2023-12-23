@@ -37,7 +37,11 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 app.get('/produto', (req, res) => {
-  res.sendFile(__dirname + '/produto.html');
+  res.sendFile(__dirname + '/src/view/forms/produto.html');
+});
+
+app.get('/consulta-cliente', (req, res) => {
+  res.sendFile(__dirname + '/src/view/forms/consultaCliente.html');
 });
 // Rota para processar o formulário de cliente
 app.post('/cadastro-cliente', (req, res) => {
@@ -55,6 +59,57 @@ app.post('/cadastro-cliente', (req, res) => {
     if (error) throw error;
 
   console.log('Cliente cadastrado com sucesso!');
+  });
+});
+app.post('/cadastro-produto', (req, res) => {
+  const nomeProduto = req.body.nomeProduto;
+  const quantidade = req.body.quantidade;
+  const valor = req.body.valor;
+  const tipo = req.body.tipo;
+  const marca = req.body.marca;
+
+  // Executa a consulta SQL para inserir dados no banco
+  const sql = 'INSERT INTO produto (produto, quantidade, valor, tipo, marca) VALUES (?, ?, ?, ?, ?)';
+  connection.query(sql, [nomeProduto, quantidade, valor, tipo, marca], (error, results) => {
+    if (error) throw error;
+
+  console.log('Cliente cadastrado com sucesso!');
+  });
+});
+
+
+app.get('/consulta-clientes', (req, res) => {
+  const nomePesquisa = req.query.nome || ''; // Obtém o parâmetro de consulta nome (ou uma string vazia se não fornecido)
+  let sql = 'SELECT * FROM cliente';
+
+  // Adiciona o filtro LIKE apenas se houver um valor de pesquisa
+  const params = [];
+  if (nomePesquisa) {
+    sql += ' WHERE nome_cli LIKE ?';
+    params.push(`%${nomePesquisa}%`);
+  }
+
+  connection.query(sql, params, (error, results) => {
+    if (error) {
+      console.error('Erro ao consultar clientes:', error);
+      res.json({ success: false, message: 'Erro ao consultar clientes.' });
+      return;
+    }
+
+    // Mapeia os resultados para um formato mais adequado
+    const clientes = results.map(cliente => ({
+      id: cliente.idcliente,
+      nome: cliente.nome_cli,
+      sobrenome: cliente.sobrenome,
+      endereco: cliente.endereco,
+      bairro: cliente.bairro,
+      cidade: cliente.cidade,
+      estado: cliente.estado,
+      cep: cliente.cep,
+      // Adicione outras colunas conforme necessário
+    }));
+
+    res.json({ success: true, clientes });
   });
 });
 

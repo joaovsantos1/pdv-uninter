@@ -1,28 +1,15 @@
 body{ 
     background: rgb(7, 140, 228);
-    margin: 0;
-      padding: 0;
+    
     }
 
-    .navbar {
-      background-color: #f8f9fa; /* Adapte a cor conforme necessário */
-      position: fixed;
-      width: 100%;
-      z-index: 1000;
-    }
-
-    .content-container {
-        margin-top: 56px; /* Altura do navbar */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: calc(100vh - 56px); /* Ajuste conforme necessário para a altura do navbar */
-    }
-
-    .custom-container {
-      width: 50%; /* ou a largura desejada */
-    }
-
+  #clienteForm{
+      margin: auto;
+      margin-left: 25%;
+      
+  }
+    
 form {
-    padding: 10px;
-}
+  padding: 10px;
+  
+  }
