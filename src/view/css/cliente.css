@@ -5,11 +5,11 @@ body{
 
   #clienteForm{
       margin: auto;
-      margin-left: 25%;
       
   }
     
-form {
-  padding: 10px;
-  
-  }
+  form {
+    padding: 10px;
+    margin-left: 150px
+    }
+    

@@ -1,43 +1,44 @@
+async function atualizarCliente() {
+  let clienteId = document.getElementById("clienteId").value;
+  let nome = document.getElementById("nome").value;
+  let sobrenome = document.getElementById("sobrenome").value;
+  let endereco = document.getElementById("endereco").value;
+  let bairro = document.getElementById("bairro").value;
+  let cidade = document.getElementById("cidade").value;
+  let estado = document.getElementById("estado").value;
+  let cep = document.getElementById("cep").value;
 
-  function atualizarCliente() {
-    // Obter os dados do formulário
-    const clienteId = document.getElementById('id').value;
-    const nome = document.getElementById('nome').value;
-    const sobrenome = document.getElementById('sobrenome').value;
-    const endereco = document.getElementById('endereco').value;
-    const bairro = document.getElementById('bairro').value;
-    const cidade = document.getElementById('cidade').value;
-    const estado = document.getElementById('estado').value;
-    const cep = document.getElementById('cep').value;
-    // Obter os demais campos da mesma forma
 
-    // Enviar uma requisição POST para atualizar os dados do cliente
-    fetch('/atualizar-cliente', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id: clienteId,
-        nome: nome,
-        sobrenome: sobrenome,
-        endereco: endereco,
-        bairro: bairro,
-        cidade: cidade,
-        estado: estado,
-        cep: cep
-        // Enviar os demais campos da mesma forma
-      }),
-    })
-    .then(response => {
+   
+    console.log('ID do cliente:', clienteId);
+    
+    try {
+      // Envie uma solicitação para o servidor para atualizar os dados do cliente
+      const response = await fetch('/atualizar-cliente', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          clienteId: clienteId,
+          nome: nome,
+          sobrenome: sobrenome,
+          endereco: endereco,
+          bairro: bairro,
+          cidade: cidade,
+          estado: estado,
+          cep: cep
+        }),
+      });
+
       if (!response.ok) {
-        throw new Error('Erro ao atualizar dados do cliente');
+        throw new Error('Erro na solicitação: ' + response.status);
       }
-      // Tratar a resposta do servidor conforme necessário
-      console.log('Dados do cliente atualizados com sucesso');
-      // Opcional: Redirecionar para a página de consulta ou outra página desejada
-      window.location.href = '/consulta-cliente';
-    })
-    .catch(error => console.error('Erro ao atualizar dados do cliente', error));
-  }
 
+      const data = await response.json();
+      console.log(data); // Adicione esta linha para imprimir os dados no console
+      alert("Cliente atualizado com sucesso!");
+    } catch (error) {
+      console.error('Erro na solicitação:', error);
+    }
+  } 
