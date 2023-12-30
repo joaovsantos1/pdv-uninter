@@ -1,3 +1,58 @@
-body{
-    background: rgb(7, 140, 228);
+body {
+    font-family: Arial, sans-serif;
+    background-color:rgb(7, 140, 228);
+    margin: 0;
+    padding: 0;
+}
+
+.caixa-container {
+    max-width: 600px;
+    margin: auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    border-style: dashed #000000; 
+}
+
+.table th, .table td {
+    border: 1px dashed #000000;
+    padding: 8px;
+    text-align: center;
+}
+
+.table th {
+    background-color: #f2f2f2;
+}
+
+
+.table td {
+    border-spacing: 0;
+}
+
+.btn-primary {
+    margin-bottom: 10px;
 }

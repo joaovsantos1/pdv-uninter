@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
+const path = require('path')
 
 const app = express();
 const port = 3000;
@@ -27,7 +28,7 @@ app.use(express.json())
 app.use(express.static(__dirname + '/src'));
 app.use('/css', express.static(__dirname + '/src/view/css', { 'extensions': ['css'], 'index': false }));
 app.use('/src/view', express.static(__dirname + '/src/view', { 'extensions': ['css'], 'index': false }));
-
+app.use('/src/controller', express.static(path.join(__dirname, 'src/controller'), { 'extensions': ['js'], 'index': false }));
 
 
 // Rota para exibir o formulário
@@ -40,7 +41,9 @@ app.get('/', (req, res) => {
 app.get('/produto', (req, res) => {
   res.sendFile(__dirname + '/src/view/forms/produto.html');
 });
-
+app.get('/caixa', (req, res) => {
+  res.sendFile(__dirname + '/src/view/forms/caixa.html');
+});
 app.get('/consulta-cliente', (req, res) => {
   res.sendFile(__dirname + '/src/view/forms/consultaCliente.html');
 });
@@ -48,6 +51,92 @@ app.get('/consulta-cliente', (req, res) => {
 app.get('/consulta-produto', (req, res) => {
   res.sendFile(__dirname + '/src/view/forms/consultaProduto.html');
 });
+// Rota para salvar a compra no banco de dados
+app.post('/finalizar-compra', (req, res) => {
+  const { idCliente, formaPagamento, valorTotal, desconto, produtos } = req.body;
+
+  // Verificar se o cliente já existe
+  if (!idCliente) {
+      res.status(400).send('ID do cliente é necessário para finalizar a compra.');
+      return;
+  }
+
+  // Iniciar uma transação para garantir a consistência nos dados
+  connection.beginTransaction((err) => {
+      if (err) {
+          console.error('Erro ao iniciar a transação:', err);
+          res.status(500).send('Erro ao finalizar a compra.');
+          return;
+      }
+
+      // Insira os dados na tabela 'compras'
+      connection.query(
+          'INSERT INTO compras (id_cliente, forma_pagamento, valor_total, desconto) VALUES (?, ?, ?, ?)',
+          [idCliente, formaPagamento, valorTotal, desconto],
+          (err, results) => {
+              if (err) {
+                  connection.rollback(() => {
+                      console.error('Erro ao inserir compra:', err);
+                      res.status(500).send('Erro ao finalizar a compra.');
+                  });
+                  return;
+              }
+
+              const idCompra = results.insertId;
+
+              // Iterar sobre os produtos e inserir na tabela 'itens_compra'
+              produtos.forEach((produto, index, array) => {
+                  const { idProduto, quantidade, valor } = produto;
+
+                  connection.query(
+                      'INSERT INTO itens_compra (id_compra, id_produto, quantidade, valor_unitario) VALUES (?, ?, ?, ?)',
+                      [idCompra, idProduto, quantidade, valor],
+                      (err) => {
+                          if (err) {
+                              connection.rollback(() => {
+                                  console.error('Erro ao inserir item de compra:', err);
+                                  res.status(500).send('Erro ao finalizar a compra.');
+                              });
+                              return;
+                          }
+
+                          // Se for o último produto, então atualize a quantidade em estoque
+                          if (index === array.length - 1) {
+                              connection.query(
+                                  'UPDATE produto SET quantidade = quantidade - ? WHERE idproduto = ?',
+                                  [quantidade, idProduto],
+                                  (err) => {
+                                      if (err) {
+                                          connection.rollback(() => {
+                                              console.error('Erro ao atualizar a quantidade em estoque:', err);
+                                              res.status(500).send('Erro ao finalizar a compra.');
+                                          });
+                                          return;
+                                      }
+
+                                      // Se chegou aqui, é o último callback, então faça o commit da transação
+                                      connection.commit((err) => {
+                                          if (err) {
+                                              connection.rollback(() => {
+                                                  console.error('Erro ao commitar a transação:', err);
+                                                  res.status(500).send('Erro ao finalizar a compra.');
+                                              });
+                                              return;
+                                          }
+
+                                          res.status(200).json({ success: true, message: 'Compra finalizada com sucesso.' });
+                                      });
+                                  }
+                              );
+                          }
+                      }
+                  );
+              });
+          }
+      );
+  });
+});
+
 // Rota para processar o formulário
 app.post('/cadastro-cliente', (req, res) => {
   const nome = req.body.nome;
@@ -61,9 +150,12 @@ app.post('/cadastro-cliente', (req, res) => {
   // Executa a consulta SQL para inserir dados no banco
   const sql = 'INSERT INTO cliente (nome_cli, sobrenome, endereco, bairro, cidade, estado, cep) VALUES (?, ?, ?, ?, ?, ?, ?)';
   connection.query(sql, [nome, sobrenome, endereco, bairro, cidade, estado, cep], (error, results) => {
-    if (error) throw error;
-
-  console.log('Cliente cadastrado com sucesso!');
+    if (error) {
+      console.error('Erro no cadastro:', error);
+      res.status(500).json({ error: 'Erro no cadastro do produto' });
+  } else {
+      res.json({ success: true });
+  }
   });
 });
 app.post('/cadastro-produto', (req, res) => {
@@ -76,13 +168,16 @@ app.post('/cadastro-produto', (req, res) => {
   // Executa a consulta SQL para inserir dados no banco
   const sql = 'INSERT INTO produto (produto, quantidade, valor, tipo, marca) VALUES (?, ?, ?, ?, ?)';
   connection.query(sql, [nomeProduto, quantidade, valor, tipo, marca], (error, results) => {
-    if (error) throw error;
-
-  console.log('Cliente cadastrado com sucesso!');
+    if (error) {
+      console.error('Erro no cadastro:', error);
+      res.status(500).json({ error: 'Erro no cadastro do produto' });
+  } else {
+      res.json({ success: true });
+  }
   });
 });
 app.get('/consulta-produtos', (req, res) => {
-  const produtoPesquisa = req.query.produto || ''; // Obtém o parâmetro de consulta nome (ou uma string vazia se não fornecido)
+  const produtoPesquisa = req.query.nome || ''; // Obtém o parâmetro de consulta nome (ou uma string vazia se não fornecido)
   let sql = 'SELECT * FROM produto';
 
   // Adiciona o filtro LIKE apenas se houver um valor de pesquisa
@@ -195,7 +290,6 @@ app.get('/consulta-clientes', (req, res) => {
     res.json({ success: true, clientes });
   });
 });
-
 app.get('/buscar-cliente', (req, res) => {
   const nomeCliente = req.query.nome;
 
@@ -225,8 +319,6 @@ app.get('/buscar-cliente', (req, res) => {
       }
   });
 });
-
-
 // Adicione esta rota para processar a atualização do cliente
 app.put('/atualizar-cliente', (req, res) => {
   const clienteId = req.body.clienteId;
@@ -253,7 +345,60 @@ app.put('/atualizar-cliente', (req, res) => {
   });
 });
 
+// Rota para obter o ID do cliente com base no nome
+app.get('/obter-id-cliente', (req, res) => {
+  const { nome } = req.query;
 
+  if (!nome) {
+      res.status(400).json({ error: 'Nome do cliente não fornecido.' });
+      return;
+  }
+
+  connection.query('SELECT idcliente FROM cliente WHERE nome_cli = ?', [nome], (err, results) => {
+      if (err) {
+          console.error('Erro ao obter ID do cliente:', err);
+          res.status(500).json({ error: 'Erro ao obter ID do cliente.' });
+          return;
+      }
+
+      if (results.length === 0) {
+          res.status(404).json({ error: 'Cliente não encontrado.' });
+          return;
+      }
+
+      const idCliente = results[0].idcliente;
+      res.json({ idCliente: idCliente });
+  });
+});
+
+// Rota para obter informações do produto com base no nome
+app.get('/obter-produto', (req, res) => {
+  const nomeProduto = req.query.nome;
+
+  // Consulta ao banco de dados para obter informações do produto
+  const query = "SELECT idproduto, produto, quantidade, valor FROM produto WHERE produto = ?";
+  const parametros = [nomeProduto];
+
+  connection.query(query, parametros, (err, results) => {
+      if (err) {
+          console.error('Erro na consulta ao banco de dados: ' + err.stack);
+          res.status(500).send('Erro interno no servidor');
+          return;
+      }
+
+      if (results.length > 0) {
+          const produto = {
+              idproduto: results[0].idproduto,
+              nome: results[0].produto,
+              quantidade: results[0].quantidade,
+              valor: results[0].valor
+          };
+          res.json(produto);
+      } else {
+          res.json(null); // Produto não encontrado
+      }
+  });
+});
 
 // Inicia o servidor
 app.listen(port, () => {
