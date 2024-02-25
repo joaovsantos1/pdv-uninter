@@ -47,9 +47,11 @@ app.get('/caixa', (req, res) => {
 app.get('/consulta-cliente', (req, res) => {
   res.sendFile(__dirname + '/src/view/forms/consultaCliente.html');
 });
-
 app.get('/consulta-produto', (req, res) => {
   res.sendFile(__dirname + '/src/view/forms/consultaProduto.html');
+});
+app.get('/consulta-vendas', (req, res) => {
+  res.sendFile(__dirname + '/src/view/forms/consultaVendas.html');
 });
 // Rota para salvar a compra no banco de dados
 app.post('/finalizar-compra', (req, res) => {
@@ -399,6 +401,54 @@ app.get('/obter-produto', (req, res) => {
       }
   });
 });
+app.get('/detalhes-produto', (req, res) => {
+  const idProduto = req.query.id;
+
+  // Consulta SQL para buscar os detalhes do produto pelo ID
+  const sql = "SELECT produto, quantidade, valor, tipo, marca FROM produto WHERE idproduto = ?";
+  connection.query(sql, [idProduto], (error, results) => {
+      if (error) {
+          console.error('Erro na consulta:', error);
+          res.status(500).json({ error: 'Erro na consulta ao banco de dados' });
+      } else {
+          if (results.length > 0) {
+              const produtoEncontrado = {
+                  nomeProduto: results[0].produto,
+                  quantidade: results[0].quantidade,
+                  valor: results[0].valor,
+                  tipo: results[0].tipo,
+                  marca: results[0].marca
+              };
+              res.json(produtoEncontrado);
+          } else {
+              res.json(null); // Produto não encontrado
+          }
+      }
+  });
+});
+
+
+app.post('/consultar-vendas', (req, res) => {
+  const idCliente = req.body.idCliente;
+
+  // Realize a consulta no banco de dados para obter as vendas do cliente
+  connection.query(
+      'SELECT compras.id, compras.data_compra, compras.forma_pagamento, compras.valor_total, compras.desconto, itens_compra.id_produto, itens_compra.quantidade, itens_compra.valor_unitario, produto.produto FROM compras JOIN itens_compra ON compras.id = itens_compra.id_compra JOIN produto ON itens_compra.id_produto = produto.idproduto WHERE compras.id_cliente = ?',
+      [idCliente],
+      async (err, results) => {
+          if (err) {
+              console.error('Erro ao consultar vendas:', err);
+              res.status(500).send('Erro ao consultar vendas.');
+              return;
+          }
+          // Enviar os resultados atualizados como resposta
+          res.status(200).json(results);
+      }
+  );
+});
+
+
+
 
 // Inicia o servidor
 app.listen(port, () => {
