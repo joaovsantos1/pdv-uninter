@@ -48,13 +48,13 @@ async function consultarVendas() {
         const row = `<tr>
                         <td>${item.id}</td>
                         <td>${dataFormatada}</td>
-                        <td>${item.forma_pagamento}</td>
-                        <td>${item.valor_total}</td>
-                        <td>${item.desconto}</td>
                         <td>${item.id_produto}</td>
                         <td>${item.produto}</td>
-                        <td>${item.quantidade}</td>
                         <td>${item.valor_unitario}</td>
+                        <td>${item.quantidade}</td>
+                        <td>${item.forma_pagamento}</td>
+                        <td>${item.desconto}</td>
+                        <td>${item.valor_total}</td>                        
                     </tr>`;
         salesBody.innerHTML += row;
     });

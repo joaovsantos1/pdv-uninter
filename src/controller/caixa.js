@@ -46,7 +46,7 @@ console.log(formaPagamento);
     const dadosCompra = {
         idCliente: idCliente,
         formaPagamento: formaPagamento,
-        valorTotal: valorTotal,
+        valorTotal: valorTotal-desconto,
         desconto: desconto,
         produtos: produtos,
     };

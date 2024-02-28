@@ -401,32 +401,6 @@ app.get('/obter-produto', (req, res) => {
       }
   });
 });
-app.get('/detalhes-produto', (req, res) => {
-  const idProduto = req.query.id;
-
-  // Consulta SQL para buscar os detalhes do produto pelo ID
-  const sql = "SELECT produto, quantidade, valor, tipo, marca FROM produto WHERE idproduto = ?";
-  connection.query(sql, [idProduto], (error, results) => {
-      if (error) {
-          console.error('Erro na consulta:', error);
-          res.status(500).json({ error: 'Erro na consulta ao banco de dados' });
-      } else {
-          if (results.length > 0) {
-              const produtoEncontrado = {
-                  nomeProduto: results[0].produto,
-                  quantidade: results[0].quantidade,
-                  valor: results[0].valor,
-                  tipo: results[0].tipo,
-                  marca: results[0].marca
-              };
-              res.json(produtoEncontrado);
-          } else {
-              res.json(null); // Produto não encontrado
-          }
-      }
-  });
-});
-
 
 app.post('/consultar-vendas', (req, res) => {
   const idCliente = req.body.idCliente;
@@ -446,9 +420,6 @@ app.post('/consultar-vendas', (req, res) => {
       }
   );
 });
-
-
-
 
 // Inicia o servidor
 app.listen(port, () => {
