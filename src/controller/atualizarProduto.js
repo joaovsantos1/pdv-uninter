@@ -7,12 +7,12 @@ async function atualizarProduto() {
     let marca = document.getElementById("marca").value;
     
   
-    // Verifique se todos os campos obrigatórios estão preenchidos
+    
      
       console.log('ID do produto:', produtoId);
       
       try {
-        // Envie uma solicitação para o servidor para atualizar os dados do cliente
+        
         const response = await fetch('/atualizar-produto', {
           method: 'PUT',
           headers: {
@@ -33,7 +33,7 @@ async function atualizarProduto() {
         }
   
         const data = await response.json();
-        console.log(data); // Adicione esta linha para imprimir os dados no console
+        console.log(data); 
         alert("Produto atualizado com sucesso!");
       } catch (error) {
         console.error('Erro na solicitação:', error);

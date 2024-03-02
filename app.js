@@ -31,7 +31,7 @@ app.use('/src/view', express.static(__dirname + '/src/view', { 'extensions': ['c
 app.use('/src/controller', express.static(path.join(__dirname, 'src/controller'), { 'extensions': ['js'], 'index': false }));
 
 
-// Rota para exibir o formulário
+
 app.get('/cliente', (req, res) => {
   res.sendFile(__dirname + '/src/view/forms/cliente.html');
 });
@@ -53,7 +53,7 @@ app.get('/consulta-produto', (req, res) => {
 app.get('/consulta-vendas', (req, res) => {
   res.sendFile(__dirname + '/src/view/forms/consultaVendas.html');
 });
-// Rota para salvar a compra no banco de dados
+
 app.post('/finalizar-compra', (req, res) => {
   const { idCliente, formaPagamento, valorTotal, desconto, produtos } = req.body;
 
@@ -139,7 +139,7 @@ app.post('/finalizar-compra', (req, res) => {
   });
 });
 
-// Rota para processar o formulário
+
 app.post('/cadastro-cliente', (req, res) => {
   const nome = req.body.nome;
   const sobrenome = req.body.sobrenome;
@@ -321,7 +321,7 @@ app.get('/buscar-cliente', (req, res) => {
       }
   });
 });
-// Adicione esta rota para processar a atualização do cliente
+
 app.put('/atualizar-cliente', (req, res) => {
   const clienteId = req.body.clienteId;
   const nome = req.body.nome;
@@ -347,7 +347,6 @@ app.put('/atualizar-cliente', (req, res) => {
   });
 });
 
-// Rota para obter o ID do cliente com base no nome
 app.get('/obter-id-cliente', (req, res) => {
   const { nome } = req.query;
 
@@ -373,7 +372,6 @@ app.get('/obter-id-cliente', (req, res) => {
   });
 });
 
-// Rota para obter informações do produto com base no nome
 app.get('/obter-produto', (req, res) => {
   const nomeProduto = req.query.nome;
 

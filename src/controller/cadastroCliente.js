@@ -8,7 +8,7 @@ async function cadastroCliente() {
     let cep = document.getElementById("cep").value;
   
       try {
-        // Envie uma solicitação para o servidor para atualizar os dados do cliente
+        
         const response = await fetch('cadastro-cliente', {
           method: 'POST',
           headers: {

@@ -1,7 +1,7 @@
 async function consultaProdutos() {
     const produtoPesquisa = document.getElementById('produtoPesquisa').value;
   
-    // Faça uma requisição AJAX para obter os clientes com base no nome
+    
     try {
       const response = await fetch(`/consulta-produtos?nome=${produtoPesquisa}`);
       const data = await response.json();
@@ -11,7 +11,7 @@ async function consultaProdutos() {
         const tbody = document.querySelector('#produtosTable tbody');
         tbody.innerHTML = '';
   
-        // Preenche a tabela com os dados dos clientes
+      
         data.produtos.forEach(produto => {
           const row = document.createElement('tr');
           row.innerHTML = `<td>${produto.id}</td>

@@ -61,7 +61,7 @@ function obterQuantidadeTotalNaTabela() {
     var linhas = $("#tabelaProdutos tbody tr");
     var quantidadeTotal = 0;
 
-    // Iterar sobre as linhas da tabela e somar as quantidades
+    
     linhas.each(function () {
         quantidadeTotal += parseInt($(this).find("td:eq(3)").text());
     });
@@ -73,7 +73,7 @@ function atualizarSubtotal() {
     let linhas = $("#tabelaProdutos tbody tr");
     let subtotal = 0;
 
-    // Iterar sobre as linhas da tabela e calcular o subtotal
+    
     linhas.each(function () {
         let valorUnitario = parseFloat($(this).find("td:eq(2)").text());
         let quantidade = parseInt($(this).find("td:eq(3)").text());
@@ -88,6 +88,6 @@ function atualizarSubtotal() {
     // Aplicar o desconto ao subtotal
     let subtotalComDesconto = subtotal - desconto;
     
-    // Exibir o subtotal com desconto na caixa de texto desativada
+    
     $("#valorTotal").val(subtotalComDesconto.toFixed(2));
 }

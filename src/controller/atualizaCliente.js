@@ -13,7 +13,7 @@ async function atualizarCliente() {
     console.log('ID do cliente:', clienteId);
     
     try {
-      // Envie uma solicitação para o servidor para atualizar os dados do cliente
+      
       const response = await fetch('/atualizar-cliente', {
         method: 'PUT',
         headers: {
@@ -36,7 +36,7 @@ async function atualizarCliente() {
       }
 
       const data = await response.json();
-      console.log(data); // Adicione esta linha para imprimir os dados no console
+      console.log(data); 
       alert("Cliente atualizado com sucesso!");
     } catch (error) {
       console.error('Erro na solicitação:', error);
